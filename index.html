@@ -849,6 +849,41 @@
       gap: 14px;
     }
 
+    .theme-stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .theme-group {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .theme-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .theme-head h3 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.12;
+    }
+
+    .theme-head p {
+      max-width: 600px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     .recommendation-card {
       display: grid;
       gap: 12px;
@@ -1143,6 +1178,7 @@
       .focus-band,
       .recommendation-grid,
       .reason-grid,
+      .theme-head,
       .priority-grid {
         grid-template-columns: 1fr;
       }
@@ -1374,8 +1410,8 @@
           <div class="grid cols-4">
             <article class="card feature-card">
               <div class="card-kicker">Knowledge Creators</div>
-              <h3>Repeating does not feel easier than creating once.</h3>
-              <p>No reusable template, too much editing, no prompt to create the next asset, weak confidence in output quality.</p>
+              <h3>They run out of obvious next videos to create.</h3>
+              <p>After the first few assets, creators need new repeat triggers: product changes, stale content, reusable templates, support demand, or persona-specific ideas.</p>
             </article>
             <article class="card feature-card">
               <div class="card-kicker">Knowledge Distributors</div>
@@ -1389,8 +1425,8 @@
             </article>
             <article class="card feature-card">
               <div class="card-kicker">Knowledge Owners / Buyers</div>
-              <h3>Value is not visible enough to justify expansion.</h3>
-              <p>No ROI proof, single-player usage, no governance, no library growth, weak renewal or expansion narrative.</p>
+              <h3>The library feels complete before renewal.</h3>
+              <p>If new content, updates, usage, and support impact are not visible, buyers may feel the tool already served its purpose.</p>
             </article>
           </div>
           <div class="focus-band">
@@ -1417,7 +1453,13 @@
             <h3>Do not confuse POC users with retained users.</h3>
             <p>In enterprise SaaS, the person evaluating the tool during a POC is often not the person who will use it every week. For Trupeer, a POC user who records one test video should not automatically be counted as churned if they do not return. The stronger retention signal is whether the intended creator team adopts a repeat workflow after the POC.</p>
           </article>
-          <div class="recommendation-grid">
+          <div class="theme-stack">
+            <section class="theme-group">
+              <div class="theme-head">
+                <h3>1. Personalization And Preference Memory</h3>
+                <p>Make the second creation easier by remembering who the user is, what they are creating, and how they like output to look and sound.</p>
+              </div>
+              <div class="recommendation-grid">
               <article class="recommendation-card">
                 <span class="evidence">Evidence: first recording + generated output</span>
                 <h3>Extract persona, preferences, goals, and work context.</h3>
@@ -1431,6 +1473,27 @@
                 <div class="rec-impact">Turns repeated work into a one-click starting point.</div>
               </article>
               <article class="recommendation-card">
+                <span class="evidence">Evidence: video preference changes</span>
+                <h3>Generate reusable video skills from activity logs.</h3>
+                <p>After users repeatedly choose voice, avatar, background, layout, and edits, suggest a generated video skill. For the first video, generate an initial skill automatically so users understand that skills can be created from their own content and preferences.</p>
+                <div class="rec-impact">Turns creator behavior into reusable automation.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: persona/template feedback</span>
+                <h3>Make persona selection change the journey.</h3>
+                <p>If a user chooses support ops, product marketing, L&D, or customer success, show role-specific templates, community examples, next-best actions, and suggested workflows.</p>
+                <div class="rec-impact">Improves discovery of repeat use cases the user may not know they have.</div>
+              </article>
+              </div>
+            </section>
+
+            <section class="theme-group">
+              <div class="theme-head">
+                <h3>2. Retain Users During Waiting States</h3>
+                <p>Use processing/export time as productive setup time instead of letting the user leave while the system is working.</p>
+              </div>
+              <div class="recommendation-grid">
+              <article class="recommendation-card">
                 <span class="evidence">Evidence: screenshot 3</span>
                 <h3>Add return-state nudges on the dashboard.</h3>
                 <p>When creators come back, guide them into one of two repeat paths: improve existing content or create new content. Surface actions like edit current video, view generated doc, publish/share, create the next asset, or start lightweight recording.</p>
@@ -1442,6 +1505,15 @@
                 <p>While the video is processing or exporting, guide creators to choose voice, avatar, background, music, brand kit, template, and publishing destination instead of making them wait passively.</p>
                 <div class="rec-impact">Turns waiting time into progress toward the next publishable asset.</div>
               </article>
+              </div>
+            </section>
+
+            <section class="theme-group">
+              <div class="theme-head">
+                <h3>3. Improve Output Quality And Reduce Rework</h3>
+                <p>Remove low-value artifacts from generated output and support doc-first workflows so repeat creation does not feel wasteful.</p>
+              </div>
+              <div class="recommendation-grid">
               <article class="recommendation-card">
                 <span class="evidence">Evidence: recording screenshots</span>
                 <h3>Remove loading/countdown screens from final recordings.</h3>
@@ -1449,34 +1521,25 @@
                 <div class="rec-impact">Improves first-output quality and lowers editing effort.</div>
               </article>
               <article class="recommendation-card">
-                <span class="evidence">Evidence: library and search flow</span>
-                <h3>Upgrade content library with list view, tags, dates, and content search.</h3>
-                <p>Add categories, tags, filters, list view, date filters, and search across transcript/script/doc content, not only video titles.</p>
-                <div class="rec-impact">Makes large libraries navigable enough for repeat use.</div>
-              </article>
-              <article class="recommendation-card">
                 <span class="evidence">Evidence: doc and template workflows</span>
                 <h3>Support doc-first creation and inline custom doc templates.</h3>
                 <p>Let users create a document without first creating a video. When choosing doc output from a video, allow users to create a new template inline instead of leaving the workflow.</p>
                 <div class="rec-impact">Removes unnecessary detours for users whose repeat job is documentation.</div>
               </article>
+              </div>
+            </section>
+
+            <section class="theme-group">
+              <div class="theme-head">
+                <h3>4. Content Library Discovery And Reuse</h3>
+                <p>Once teams have many assets, retention depends on whether old content can be found, reused, refreshed, and applied to support use cases.</p>
+              </div>
+              <div class="recommendation-grid">
               <article class="recommendation-card">
-                <span class="evidence">Evidence: knowledge base flow</span>
-                <h3>Make knowledge base creation multi-destination and article-native.</h3>
-                <p>Allow multiple knowledge bases, for example internal and external. Let “Add new article” create an article directly, and allow sections/articles to have independent sharing controls.</p>
-                <div class="rec-impact">Supports real organizational knowledge workflows instead of one shared container.</div>
-              </article>
-              <article class="recommendation-card">
-                <span class="evidence">Evidence: share/export flow</span>
-                <h3>Add direct upload destinations beyond export/download.</h3>
-                <p>Offer upload/publish actions to Google Drive, OneDrive, Dropbox, Notion, Confluence, Google Docs, and help center tools instead of only downloading files.</p>
-                <div class="rec-impact">Moves creator output into existing work systems faster.</div>
-              </article>
-              <article class="recommendation-card">
-                <span class="evidence">Evidence: video preference changes</span>
-                <h3>Generate reusable video skills from activity logs.</h3>
-                <p>After users repeatedly choose voice, avatar, background, layout, and edits, suggest a generated video skill. For the first video, generate an initial skill automatically so users understand that skills can be created from their own content and preferences.</p>
-                <div class="rec-impact">Turns creator behavior into reusable automation.</div>
+                <span class="evidence">Evidence: library and search flow</span>
+                <h3>Upgrade content library with list view, tags, dates, and content search.</h3>
+                <p>Add categories, tags, filters, list view, date filters, and search across transcript/script/doc content, not only video titles.</p>
+                <div class="rec-impact">Makes large libraries navigable enough for repeat use.</div>
               </article>
               <article class="recommendation-card">
                 <span class="evidence">Evidence: product drift feedback</span>
@@ -1490,12 +1553,29 @@
                 <p>For support and CS teams with many videos, auto-tag content, search scripts/transcripts/docs, and suggest relevant clips or guides for a customer query, ticket, or help-center search.</p>
                 <div class="rec-impact">Makes a large content library operationally useful, not just stored.</div>
               </article>
+              </div>
+            </section>
+
+            <section class="theme-group">
+              <div class="theme-head">
+                <h3>5. Publishing And Knowledge Base Embedding</h3>
+                <p>Reduce churn by moving Trupeer content into the systems where teams already support customers, train employees, and store knowledge.</p>
+              </div>
+              <div class="recommendation-grid">
               <article class="recommendation-card">
-                <span class="evidence">Evidence: persona/template feedback</span>
-                <h3>Make persona selection change the journey.</h3>
-                <p>If a user chooses support ops, product marketing, L&D, or customer success, show role-specific templates, community examples, next-best actions, and suggested workflows.</p>
-                <div class="rec-impact">Improves discovery of repeat use cases the user may not know they have.</div>
+                <span class="evidence">Evidence: knowledge base flow</span>
+                <h3>Make knowledge base creation multi-destination and article-native.</h3>
+                <p>Allow multiple knowledge bases, for example internal and external. Let “Add new article” create an article directly, and allow sections/articles to have independent sharing controls.</p>
+                <div class="rec-impact">Supports real organizational knowledge workflows instead of one shared container.</div>
               </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: share/export flow</span>
+                <h3>Add direct upload destinations beyond export/download.</h3>
+                <p>Offer upload/publish actions to Google Drive, OneDrive, Dropbox, Notion, Confluence, Google Docs, and help center tools instead of only downloading files.</p>
+                <div class="rec-impact">Moves creator output into existing work systems faster.</div>
+              </article>
+              </div>
+            </section>
             </div>
         </section>
 

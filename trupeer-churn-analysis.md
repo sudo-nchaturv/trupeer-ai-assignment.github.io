@@ -65,10 +65,10 @@ Before listing features, identify which repeat-cycle risks matter most for each 
 
 | Segment | Churn Risk | Why It Matters |
 |---|---|---|
-| Knowledge Creators | Repeating does not feel easier than creating once | No reusable template, too much editing, no prompt to create the next asset, weak confidence in output quality |
+| Knowledge Creators | They run out of obvious next videos to create | After the first few assets, creators need new repeat triggers: product changes, stale content, reusable templates, support demand, or persona-specific ideas |
 | Knowledge Distributors | Content is created but not embedded into workflows | Loose links, weak integrations, unclear publishing ownership, no recurring distribution motion |
 | Knowledge Consumers | Consumers do not create enough pull for more content | Low engagement, poor searchability, outdated answers, unclear usefulness, no feedback loop to creators |
-| Knowledge Owners / Buyers | Value is not visible enough to justify expansion | No ROI proof, single-player usage, no governance, no library growth, weak renewal or expansion narrative |
+| Knowledge Owners / Buyers | The library feels complete before renewal | If new content, updates, usage, and support impact are not visible, buyers may feel the tool already served its purpose |
 
 Focus for this analysis:
 
@@ -86,23 +86,45 @@ Why prioritize Knowledge Creators:
 
 In enterprise SaaS, the person evaluating the tool during a POC is often not the person who will use it every week. For Trupeer, a POC user who records one test video should not automatically be counted as churned if they do not return. The stronger retention signal is whether the intended creator team adopts a repeat workflow after the POC.
 
-### Feature Fixes / Recommendations
+### Feature Themes / Recommendations
+
+#### 1. Personalization And Preference Memory
 
 | Recommendation | Evidence | Why It Reduces Churn |
-|---|---|
+|---|---|---|
 | Extract persona, preferences, goals, and work context | First recording and generated output | Uses earlier generated videos/docs to infer user persona, goals, preferences, source URL, product/workflow context, and detected app name, then pre-fills Custom Skills, Brand Kits, video preferences, AI voice, music, background, avatar, and logos |
 | Create reusable templates, not only raw preferences | Preference-heavy editor flow | Lets creators save themed templates for support articles, launch demos, SOPs, onboarding guides, or sales leave-behinds |
+| Generate reusable video skills from activity logs | Video preference changes | Turns repeated choices around voice, avatar, background, layout, and edits into a reusable video skill |
+| Make persona selection change the journey | Persona and template feedback | Shows role-specific templates, community examples, next-best actions, and suggested workflows based on selected persona |
+
+#### 2. Retain Users During Waiting States
+
+| Recommendation | Evidence | Why It Reduces Churn |
+|---|---|---|
 | Add return-state nudges on the dashboard | Screenshot 3: returning user lands on generic dashboard | Guides creators into one of two repeat paths: improve existing content or create new content |
 | Use processing time for video configuration | Processing/export wait states | Lets creators choose voice, avatar, background, music, brand kit, template, and publishing destination while waiting |
+
+#### 3. Improve Output Quality And Reduce Rework
+
+| Recommendation | Evidence | Why It Reduces Churn |
+|---|---|---|
 | Remove loading/countdown screens from final recordings | Recording screenshots | Automatically trims recorder setup, countdown, extension popovers, loading overlays, and initial blank states |
-| Upgrade content library with list view, tags, dates, and content search | Library and search flow | Makes large libraries navigable with categories, tags, filters, list view, date filters, and transcript/script/doc search |
 | Support doc-first creation and inline custom doc templates | Doc and template workflows | Lets users create a document without a video, and create a new doc template inside the doc-output workflow |
-| Make knowledge base creation multi-destination and article-native | Knowledge base flow | Supports multiple knowledge bases, direct article creation, and independent sharing controls |
-| Add direct upload destinations beyond export/download | Share/export flow | Publishes to Google Drive, OneDrive, Dropbox, Notion, Confluence, Google Docs, and help center tools |
-| Generate reusable video skills from activity logs | Video preference changes | Turns repeated choices around voice, avatar, background, layout, and edits into a reusable video skill |
+
+#### 4. Content Library Discovery And Reuse
+
+| Recommendation | Evidence | Why It Reduces Churn |
+|---|---|---|
+| Upgrade content library with list view, tags, dates, and content search | Library and search flow | Makes large libraries navigable with categories, tags, filters, list view, date filters, and transcript/script/doc search |
 | Detect product drift and suggest content updates | Product drift feedback | Tracks product URLs, screenshots, UI labels, and workflow steps, then flags stale assets when the product changes |
 | Build support discovery across videos and docs | Support library use case | Auto-tags content, searches scripts/transcripts/docs, and suggests relevant clips or guides for a customer query, ticket, or help-center search |
-| Make persona selection change the journey | Persona and template feedback | Shows role-specific templates, community examples, next-best actions, and suggested workflows based on selected persona |
+
+#### 5. Publishing And Knowledge Base Embedding
+
+| Recommendation | Evidence | Why It Reduces Churn |
+|---|---|---|
+| Make knowledge base creation multi-destination and article-native | Knowledge base flow | Supports multiple knowledge bases, direct article creation, and independent sharing controls |
+| Add direct upload destinations beyond export/download | Share/export flow | Publishes to Google Drive, OneDrive, Dropbox, Notion, Confluence, Google Docs, and help center tools |
 
 ## 6. Journeys To Reduce Churn
 
