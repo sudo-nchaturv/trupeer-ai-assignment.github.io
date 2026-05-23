@@ -1,0 +1,1636 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trupeer AI Churn & Stickiness Analysis</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5d6977;
+      --line: #dce3ea;
+      --paper: #f7f9fc;
+      --panel: #ffffff;
+      --green: #238b5b;
+      --green-soft: #e9f7ef;
+      --blue: #245ca8;
+      --blue-soft: #eaf2ff;
+      --red: #c94634;
+      --red-soft: #fff1ef;
+      --gold: #a86612;
+      --gold-soft: #fff5df;
+      --teal: #137b84;
+      --teal-soft: #e8f7f8;
+      --shadow: 0 18px 50px rgba(24, 38, 58, 0.12);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .shell {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 28px;
+      border-bottom: 1px solid rgba(220, 227, 234, 0.86);
+      background: rgba(247, 249, 252, 0.9);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 220px;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      color: white;
+      background: #17202a;
+      font-size: 15px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 7px 11px;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      color: var(--ink);
+      background: #ffffff;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 38px;
+      align-items: center;
+      padding: 54px 44px 34px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: white;
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    h1 {
+      max-width: 860px;
+      margin: 0;
+      font-size: clamp(40px, 6.4vw, 76px);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+      background: #fff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      color: #fff;
+      border-color: #17202a;
+      background: #17202a;
+    }
+
+    .hero-panel {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .value-equation {
+      display: grid;
+      gap: 10px;
+    }
+
+    .equation-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fcfdff;
+    }
+
+    .equation-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .metric-pill {
+      min-height: 54px;
+      padding: 13px 14px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 760;
+    }
+
+    .metric-pill.value {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .metric-pill.cost {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .symbol {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px 44px 72px;
+    }
+
+    section {
+      scroll-margin-top: 86px;
+      padding: 44px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(28px, 3.3vw, 44px);
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .section-intro {
+      max-width: 620px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+    }
+
+    .segment-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 360px;
+      padding: 18px;
+      transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+      cursor: pointer;
+    }
+
+    .segment-card:hover,
+    .segment-card.selected {
+      transform: translateY(-2px);
+      border-color: #9bb8dc;
+      box-shadow: var(--shadow);
+    }
+
+    .card-kicker {
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .segment-card h3,
+    .feature-card h3,
+    .workflow-card h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .includes {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .detail {
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .detail b {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--ink);
+    }
+
+    .journey-wrap {
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .journey {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(250px, 1fr));
+      gap: 14px;
+      min-width: 1030px;
+    }
+
+    .journey-zone {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .zone-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 58px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .zone-head h3 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.18;
+    }
+
+    .segment-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 740;
+      white-space: nowrap;
+    }
+
+    .creator {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .distributor {
+      color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .consumer {
+      color: var(--gold);
+      background: var(--gold-soft);
+    }
+
+    .owner {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .stage {
+      position: relative;
+      padding: 13px 13px 13px 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+    }
+
+    .stage::before {
+      content: attr(data-step);
+      position: absolute;
+      left: 12px;
+      top: 13px;
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      color: #fff;
+      background: #17202a;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .stage h4 {
+      margin: 0 0 4px;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .stage p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .leakage {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+      gap: 14px;
+    }
+
+    .leakage-zones {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(190px, 1fr));
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .leak-zone {
+      display: grid;
+      gap: 9px;
+      align-content: start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .leak-zone h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.15;
+    }
+
+    .leak-card {
+      display: block;
+      width: 100%;
+      min-height: 74px;
+      padding: 11px 12px;
+      border: 1px solid #f0c3ba;
+      border-radius: 8px;
+      color: #71372f;
+      background: var(--red-soft);
+      text-align: left;
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .leak-card:hover,
+    .leak-card.active {
+      transform: translateY(-2px);
+      border-color: #d04a3a;
+      box-shadow: 0 10px 24px rgba(201, 70, 52, 0.13);
+    }
+
+    .leak-card b {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--red);
+      font-size: 13px;
+    }
+
+    .leak-card span {
+      display: block;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .leakage-panel {
+      position: sticky;
+      top: 94px;
+      align-self: start;
+      padding: 22px;
+      border: 1px solid #f0c3ba;
+      border-radius: 8px;
+      background: var(--red-soft);
+    }
+
+    .leakage-panel h3 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .leakage-panel p {
+      margin: 0;
+      color: #71372f;
+    }
+
+    .assumption-box {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+      padding: 18px;
+      border: 1px solid #bddfca;
+      border-radius: 8px;
+      background: var(--green-soft);
+    }
+
+    .assumption-box h3 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .assumption-box p {
+      margin: 0;
+      color: #315942;
+    }
+
+    .cycle-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .cycle-step {
+      min-height: 74px;
+      padding: 12px;
+      border: 1px solid #bddfca;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 760;
+      text-align: center;
+    }
+
+    .cycle-step.danger {
+      color: var(--red);
+      border-color: #f0c3ba;
+      background: var(--red-soft);
+    }
+
+    .cycle-arrow {
+      color: #587463;
+      font-weight: 900;
+    }
+
+    .principle-map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .principle {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .principle strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .principle span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .principle em {
+      display: block;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      color: var(--blue);
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 760;
+    }
+
+    .priority-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .priority-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .priority-card h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .priority-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .risk-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .risk-row {
+      display: grid;
+      grid-template-columns: 128px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+    }
+
+    .risk-row strong {
+      font-size: 13px;
+    }
+
+    .risk-bar {
+      height: 12px;
+      border-radius: 999px;
+      background: #e6edf5;
+      overflow: hidden;
+    }
+
+    .risk-bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--red);
+    }
+
+    .logic {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .logic-box {
+      min-height: 82px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #fbfcfe;
+      border: 1px solid var(--line);
+    }
+
+    .logic-box b {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .logic-arrow {
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .feature-card,
+    .workflow-card {
+      padding: 18px;
+    }
+
+    .feature-card p,
+    .workflow-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .persona-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 14px;
+    }
+
+    .persona-tags span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .focus-band {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 18px;
+      padding: 20px;
+      border: 1px solid #bddfca;
+      border-radius: 8px;
+      background: var(--green-soft);
+    }
+
+    .focus-band h3 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 28px;
+      line-height: 1.08;
+    }
+
+    .focus-band p {
+      margin: 0;
+      color: #315942;
+    }
+
+    .reason-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .reason-card {
+      padding: 13px;
+      border: 1px solid #bddfca;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .reason-card b {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    .reason-card span {
+      display: block;
+      color: #315942;
+      font-size: 12px;
+      line-height: 1.38;
+    }
+
+    .observation-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 16px;
+    }
+
+    .observation-card h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.14;
+    }
+
+    .observation-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .observation-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .observation-item {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+    }
+
+    .observation-item b {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .observation-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .recommendation-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .recommendation-card {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .recommendation-card h3 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.15;
+    }
+
+    .recommendation-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .evidence {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 28px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      color: var(--red);
+      background: var(--red-soft);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .rec-impact {
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .workflow-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .workflow-mini {
+      min-height: 170px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .workflow-mini .num {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      color: #fff;
+      background: #17202a;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .workflow-mini h3 {
+      margin: 0 0 7px;
+      font-size: 16px;
+      line-height: 1.18;
+    }
+
+    .workflow-mini p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .workflow-mini b {
+      display: block;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      color: var(--green);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .stickiness-feature {
+      margin-bottom: 16px;
+      padding: 20px;
+      border: 1px solid #bddfca;
+      border-radius: 8px;
+      background: var(--green-soft);
+    }
+
+    .stickiness-feature h3 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 30px;
+      line-height: 1.08;
+    }
+
+    .stickiness-feature p {
+      margin: 0;
+      color: #315942;
+    }
+
+    .stickiness-visual {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .loop {
+      position: relative;
+      min-height: 360px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      overflow: hidden;
+    }
+
+    .loop-node {
+      position: absolute;
+      width: 154px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fbfcfe;
+      font-size: 13px;
+      font-weight: 760;
+      text-align: center;
+    }
+
+    .loop-node.n1 { top: 28px; left: calc(50% - 77px); }
+    .loop-node.n2 { top: 136px; right: 28px; }
+    .loop-node.n3 { bottom: 34px; left: calc(50% - 77px); }
+    .loop-node.n4 { top: 136px; left: 28px; }
+
+    .loop-center {
+      position: absolute;
+      inset: 127px calc(50% - 84px) auto;
+      display: grid;
+      place-items: center;
+      width: 168px;
+      height: 98px;
+      border-radius: 8px;
+      color: var(--green);
+      background: var(--green-soft);
+      border: 1px solid #bddfca;
+      text-align: center;
+      font-weight: 820;
+    }
+
+    .loop-line {
+      position: absolute;
+      border-color: #b8c5d4;
+      border-style: solid;
+      opacity: 0.9;
+    }
+
+    .loop-line.l1 {
+      top: 87px;
+      left: 50%;
+      width: 176px;
+      height: 70px;
+      border-width: 2px 2px 0 0;
+      border-radius: 0 8px 0 0;
+    }
+
+    .loop-line.l2 {
+      right: 104px;
+      top: 194px;
+      width: 176px;
+      height: 72px;
+      border-width: 0 2px 2px 0;
+      border-radius: 0 0 8px 0;
+    }
+
+    .loop-line.l3 {
+      bottom: 91px;
+      right: 50%;
+      width: 176px;
+      height: 72px;
+      border-width: 0 0 2px 2px;
+      border-radius: 0 0 0 8px;
+    }
+
+    .loop-line.l4 {
+      left: 104px;
+      top: 88px;
+      width: 176px;
+      height: 70px;
+      border-width: 2px 0 0 2px;
+      border-radius: 8px 0 0 0;
+    }
+
+    .stick-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .stick-card h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 10px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .check-list li {
+      position: relative;
+      padding-left: 24px;
+      color: var(--muted);
+    }
+
+    .check-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .sources {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sources a {
+      display: inline-flex;
+      min-height: 34px;
+      align-items: center;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: #fff;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding-inline: 18px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding-inline: 22px;
+      }
+
+      .main {
+        padding-inline: 22px;
+      }
+
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .grid.cols-4,
+      .grid.cols-3,
+      .grid.cols-2,
+      .principle-map,
+      .stickiness-visual,
+      .leakage,
+      .logic,
+      .assumption-box,
+      .cycle-flow,
+      .focus-band,
+      .recommendation-grid,
+      .reason-grid,
+      .priority-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .logic-arrow,
+      .cycle-arrow {
+        transform: rotate(90deg);
+        justify-self: center;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .brand {
+        min-width: 0;
+      }
+
+      .hero,
+      .main {
+        padding-inline: 16px;
+      }
+
+      .equation-row {
+        grid-template-columns: 1fr;
+      }
+
+      .symbol {
+        text-align: center;
+      }
+
+      .loop {
+        min-height: auto;
+      }
+
+      .loop-node,
+      .loop-center,
+      .loop-line {
+        position: static;
+        width: auto;
+        height: auto;
+        margin-bottom: 10px;
+        border-width: 1px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div>Trupeer Churn Analysis</div>
+      </div>
+      <nav class="nav" aria-label="Page sections">
+        <a href="#segments">Segments</a>
+        <a href="#journey">Journey</a>
+        <a href="#leakage">Churn Definition</a>
+        <a href="#priority">Segment Risks</a>
+        <a href="#observations">Recommendations</a>
+        <a href="#reduce-journeys">Journeys</a>
+        <a href="#stickiness">Stickiness</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> Problem-first product strategy brief</div>
+          <h1>How Trupeer AI can understand churn before solving it.</h1>
+          <p class="hero-copy">A structured view of user segments, the Trupeer journey, repeat-cycle churn, and the biggest churn risks by segment before we move into feature prioritization.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#journey">View Journey</a>
+            <a class="btn" href="trupeer-churn-analysis.md">Open Markdown Note</a>
+          </div>
+        </div>
+        <aside class="hero-panel">
+          <div class="value-equation">
+            <div class="equation-card">
+              <div class="card-kicker">Core Retention Equation</div>
+              <div class="equation-row">
+                <div class="metric-pill value">Perceived Value</div>
+                <div class="symbol">&gt;</div>
+                <div class="metric-pill cost">Cost + Effort + Risk</div>
+              </div>
+            </div>
+            <div class="equation-card">
+              <div class="card-kicker">Trupeer-Specific Test</div>
+              <p>Does Trupeer repeatedly convert raw knowledge into useful, distributed, consumed, and measurable knowledge with less effort than the previous way of working?</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="main">
+        <section id="segments">
+          <div class="section-head">
+            <h2>User Segments</h2>
+            <p class="section-intro">Grouped by the role they play in the lifecycle of knowledge, not merely by department. Click a segment to softly highlight its related cards.</p>
+          </div>
+          <div class="grid cols-4" id="segmentGrid">
+            <article class="card segment-card" data-segment="creator">
+              <div class="card-kicker">Segment 01</div>
+              <h3>Knowledge Creators</h3>
+              <p class="includes">Includes product marketers, customer success managers, support ops, product managers, technical writers, L&D, ops, IT, and sales engineers.</p>
+              <div class="persona-tags"><span>Product marketers</span><span>Customer success</span><span>Support ops</span></div>
+              <div class="detail-list">
+                <div class="detail"><b>Goal</b>Convert raw product or process knowledge into reusable content.</div>
+                <div class="detail"><b>Needs</b>Fast recording, accurate AI generation, editing control, brand consistency.</div>
+                <div class="detail"><b>Problems</b>Manual creation is slow, repetitive, and difficult to keep polished.</div>
+              </div>
+            </article>
+
+            <article class="card segment-card" data-segment="distributor">
+              <div class="card-kicker">Segment 02</div>
+              <h3>Knowledge Distributors</h3>
+              <p class="includes">Includes customer success, support ops, product marketers, sales enablement, onboarding, IT rollout, and growth teams.</p>
+              <div class="persona-tags"><span>Customer success</span><span>Support ops</span><span>Product marketers</span></div>
+              <div class="detail-list">
+                <div class="detail"><b>Goal</b>Get the right knowledge to the right audience.</div>
+                <div class="detail"><b>Needs</b>Sharing, embeds, localization, permissions, viewer tracking.</div>
+                <div class="detail"><b>Problems</b>Content is scattered and often does not reach users in context.</div>
+              </div>
+            </article>
+
+            <article class="card segment-card" data-segment="consumer">
+              <div class="card-kicker">Segment 03</div>
+              <h3>Knowledge Consumers</h3>
+              <p class="includes">Includes customers, employees, prospects, partners, new hires, and internal tool users.</p>
+              <div class="detail-list">
+                <div class="detail"><b>Goal</b>Complete a task, understand a product, or make a decision.</div>
+                <div class="detail"><b>Needs</b>Clear visual guidance, searchability, trust, context.</div>
+                <div class="detail"><b>Problems</b>Long docs are hard to consume; videos are hard to search; outdated content creates confusion.</div>
+              </div>
+            </article>
+
+            <article class="card segment-card" data-segment="owner">
+              <div class="card-kicker">Segment 04</div>
+              <h3>Knowledge Owners / Buyers</h3>
+              <p class="includes">Includes team leads, functional heads, admins, enterprise buyers, founders, and RevOps/CSOps leaders.</p>
+              <div class="detail-list">
+                <div class="detail"><b>Goal</b>Ensure knowledge creation creates business value.</div>
+                <div class="detail"><b>Needs</b>Adoption visibility, usage analytics, ROI, governance, security.</div>
+                <div class="detail"><b>Problems</b>Hard to prove reduced effort, tickets, onboarding time, or sales friction.</div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="journey">
+          <div class="section-head">
+            <h2>Trupeer User Journey</h2>
+            <p class="section-intro">Stages are grouped into four zones. Segment labels sit on the zones because those groups own that part of the journey.</p>
+          </div>
+          <div class="journey-wrap">
+            <div class="journey">
+              <article class="journey-zone">
+                <div class="zone-head">
+                  <h3>Knowledge Creation</h3>
+                  <span class="segment-badge creator">Creators + Owners</span>
+                </div>
+                <div class="stage" data-step="1"><h4>Trigger</h4><p>User has product or process knowledge to explain.</p></div>
+                <div class="stage" data-step="2"><h4>Activation</h4><p>Signup, workspace entry, first use case selected.</p></div>
+                <div class="stage" data-step="3"><h4>Capture</h4><p>Record screen or upload existing video.</p></div>
+                <div class="stage" data-step="4"><h4>AI Creation</h4><p>Generate video, script, voiceover, screenshots, and doc.</p></div>
+                <div class="stage" data-step="5"><h4>Edit & Package</h4><p>Refine script, screenshots, voice, brand, language, and format.</p></div>
+              </article>
+
+              <article class="journey-zone">
+                <div class="zone-head">
+                  <h3>Knowledge Distribution</h3>
+                  <span class="segment-badge distributor">Distributors</span>
+                </div>
+                <div class="stage" data-step="6"><h4>Publish</h4><p>Export, share, embed, translate, or publish to a knowledge base.</p></div>
+                <div class="stage" data-step="7"><h4>Route</h4><p>Place content inside support, sales, training, or rollout workflows.</p></div>
+              </article>
+
+              <article class="journey-zone">
+                <div class="zone-head">
+                  <h3>Knowledge Consumption</h3>
+                  <span class="segment-badge consumer">Consumers</span>
+                </div>
+                <div class="stage" data-step="8"><h4>Consume</h4><p>Audience watches, reads, searches, or follows steps.</p></div>
+                <div class="stage" data-step="9"><h4>Apply</h4><p>Consumer completes a task, learns a workflow, or evaluates a product.</p></div>
+              </article>
+
+              <article class="journey-zone">
+                <div class="zone-head">
+                  <h3>Value Realization & Scale</h3>
+                  <span class="segment-badge owner">Owners + Teams</span>
+                </div>
+                <div class="stage" data-step="10"><h4>Realize Value</h4><p>Fewer questions, faster onboarding, better demos, saved time.</p></div>
+                <div class="stage" data-step="11"><h4>Repeat Usage</h4><p>More workflows, more assets, more teams.</p></div>
+                <div class="stage" data-step="12"><h4>Govern & Scale</h4><p>Team library, templates, analytics, permissions, renewal case.</p></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="leakage">
+          <div class="section-head">
+            <h2>Churn Definition</h2>
+            <p class="section-intro">Working assumption: the user or organization has completed the journey once. Churn means the completed journey does not become a repeat cycle.</p>
+          </div>
+          <div class="assumption-box">
+            <div>
+              <div class="card-kicker">Definition For This Assignment</div>
+              <h3>Churn = failure to enter a repeat cycle.</h3>
+              <p>The user has already created, distributed, and had content consumed once. The churn problem is that they do not come back to create, update, publish, localize, or scale the next knowledge asset.</p>
+            </div>
+            <div class="cycle-flow" aria-label="Repeat cycle churn flow">
+              <div class="cycle-step">Completed journey<br>Creation → Distribution → Consumption → Value</div>
+              <div class="cycle-arrow">→</div>
+              <div class="cycle-step danger">No repeat cycle<br>No recurring workflow</div>
+              <div class="cycle-arrow">→</div>
+              <div class="cycle-step danger">Churn risk<br>downgrade, cancellation, or non-renewal</div>
+            </div>
+          </div>
+          <article class="observation-card">
+            <div class="card-kicker">Important Churn Insight</div>
+            <h3>Customers can churn after content saturation, not only because onboarding failed.</h3>
+            <p>Small teams may create one or two videos, use credits, and feel done within a month. Larger teams may reach the same point near renewal after building a bigger library. Trupeer needs recurring reasons to return: product drift alerts, freshness checks, support discovery, persona-driven templates, and reusable workflows.</p>
+          </article>
+        </section>
+
+        <section id="priority">
+          <div class="section-head">
+            <h2>Churn Risks By Segment</h2>
+            <p class="section-intro">Before listing features, identify which repeat-cycle risks matter most for each user segment.</p>
+          </div>
+          <div class="grid cols-4">
+            <article class="card feature-card">
+              <div class="card-kicker">Knowledge Creators</div>
+              <h3>Repeating does not feel easier than creating once.</h3>
+              <p>No reusable template, too much editing, no prompt to create the next asset, weak confidence in output quality.</p>
+            </article>
+            <article class="card feature-card">
+              <div class="card-kicker">Knowledge Distributors</div>
+              <h3>Content is created but not embedded into workflows.</h3>
+              <p>Loose links, weak integrations, unclear ownership of where content should live, no recurring distribution motion.</p>
+            </article>
+            <article class="card feature-card">
+              <div class="card-kicker">Knowledge Consumers</div>
+              <h3>Consumers do not create enough pull for more content.</h3>
+              <p>Low engagement, poor searchability, outdated answers, unclear usefulness, no feedback loop to creators.</p>
+            </article>
+            <article class="card feature-card">
+              <div class="card-kicker">Knowledge Owners / Buyers</div>
+              <h3>Value is not visible enough to justify expansion.</h3>
+              <p>No ROI proof, single-player usage, no governance, no library growth, weak renewal or expansion narrative.</p>
+            </article>
+          </div>
+          <div class="focus-band">
+            <div>
+              <div class="card-kicker">Focus For This Analysis</div>
+              <h3>Prioritize Knowledge Creators.</h3>
+              <p>For the next feature list, focus on the people who actually create and maintain assets after the first successful output. In Trupeer, repeat-cycle churn starts when creators do not see a clear path from one generated video/doc to a reusable system for future work.</p>
+              <div class="reason-grid">
+                <div class="reason-card"><b>Closest to product promise</b><span>Trupeer's core promise begins with turning raw work into videos and docs. If creation is not repeatable, later distribution and analytics do not matter enough.</span></div>
+                <div class="reason-card"><b>Highest controllable churn risk</b><span>Many observed issues sit inside the creator workflow: context capture, preferences, templates, loading, editing, documents, and publishing.</span></div>
+                <div class="reason-card"><b>Best early retention signal</b><span>A creator returning to edit, reuse a template, generate a skill, or create another asset is a stronger signal than a POC user logging in once.</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="observations">
+          <div class="section-head">
+            <h2>Recommendations To Reduce Creator Churn</h2>
+            <p class="section-intro">Feature fixes derived from hands-on observations, focused on getting creators to engage with existing content or create the next asset.</p>
+          </div>
+          <article class="observation-card">
+            <div class="card-kicker">B2B SaaS Lens</div>
+            <h3>Do not confuse POC users with retained users.</h3>
+            <p>In enterprise SaaS, the person evaluating the tool during a POC is often not the person who will use it every week. For Trupeer, a POC user who records one test video should not automatically be counted as churned if they do not return. The stronger retention signal is whether the intended creator team adopts a repeat workflow after the POC.</p>
+          </article>
+          <div class="recommendation-grid">
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: first recording + generated output</span>
+                <h3>Extract persona, preferences, goals, and work context.</h3>
+                <p>Use earlier generated videos/docs to infer user persona, goals, preferences, source URL, product/workflow context, and detected app name. Use this to pre-fill Custom Skills, Brand Kits, video preferences, AI voice, music, background, avatar, and logos.</p>
+                <div class="rec-impact">Makes repeat creation feel personalized and reduces setup effort after the first asset.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: preference-heavy editor flow</span>
+                <h3>Create reusable templates, not only raw preferences.</h3>
+                <p>Let creators save themed templates for work categories such as support article, launch demo, internal SOP, onboarding guide, or sales leave-behind. Templates should bundle voice, avatar, music, style, brand kit, doc format, and publishing destination.</p>
+                <div class="rec-impact">Turns repeated work into a one-click starting point.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: screenshot 3</span>
+                <h3>Add return-state nudges on the dashboard.</h3>
+                <p>When creators come back, guide them into one of two repeat paths: improve existing content or create new content. Surface actions like edit current video, view generated doc, publish/share, create the next asset, or start lightweight recording.</p>
+                <div class="rec-impact">Turns passive dashboard visits into repeat-cycle actions.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: processing/export wait states</span>
+                <h3>Use processing time for video configuration.</h3>
+                <p>While the video is processing or exporting, guide creators to choose voice, avatar, background, music, brand kit, template, and publishing destination instead of making them wait passively.</p>
+                <div class="rec-impact">Turns waiting time into progress toward the next publishable asset.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: recording screenshots</span>
+                <h3>Remove loading/countdown screens from final recordings.</h3>
+                <p>Automatically trim recorder setup, countdown, extension popovers, loading overlays, and initial blank states from generated videos unless the user explicitly keeps them.</p>
+                <div class="rec-impact">Improves first-output quality and lowers editing effort.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: library and search flow</span>
+                <h3>Upgrade content library with list view, tags, dates, and content search.</h3>
+                <p>Add categories, tags, filters, list view, date filters, and search across transcript/script/doc content, not only video titles.</p>
+                <div class="rec-impact">Makes large libraries navigable enough for repeat use.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: doc and template workflows</span>
+                <h3>Support doc-first creation and inline custom doc templates.</h3>
+                <p>Let users create a document without first creating a video. When choosing doc output from a video, allow users to create a new template inline instead of leaving the workflow.</p>
+                <div class="rec-impact">Removes unnecessary detours for users whose repeat job is documentation.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: knowledge base flow</span>
+                <h3>Make knowledge base creation multi-destination and article-native.</h3>
+                <p>Allow multiple knowledge bases, for example internal and external. Let “Add new article” create an article directly, and allow sections/articles to have independent sharing controls.</p>
+                <div class="rec-impact">Supports real organizational knowledge workflows instead of one shared container.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: share/export flow</span>
+                <h3>Add direct upload destinations beyond export/download.</h3>
+                <p>Offer upload/publish actions to Google Drive, OneDrive, Dropbox, Notion, Confluence, Google Docs, and help center tools instead of only downloading files.</p>
+                <div class="rec-impact">Moves creator output into existing work systems faster.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: video preference changes</span>
+                <h3>Generate reusable video skills from activity logs.</h3>
+                <p>After users repeatedly choose voice, avatar, background, layout, and edits, suggest a generated video skill. For the first video, generate an initial skill automatically so users understand that skills can be created from their own content and preferences.</p>
+                <div class="rec-impact">Turns creator behavior into reusable automation.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: product drift feedback</span>
+                <h3>Detect product drift and suggest content updates.</h3>
+                <p>Track product URLs, screenshots, UI labels, and workflow steps used in a video/doc. When the underlying product changes, flag stale assets and suggest what needs to be updated.</p>
+                <div class="rec-impact">Creates a natural repeat trigger after the original content library is “done.”</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: support library use case</span>
+                <h3>Build support discovery across videos and docs.</h3>
+                <p>For support and CS teams with many videos, auto-tag content, search scripts/transcripts/docs, and suggest relevant clips or guides for a customer query, ticket, or help-center search.</p>
+                <div class="rec-impact">Makes a large content library operationally useful, not just stored.</div>
+              </article>
+              <article class="recommendation-card">
+                <span class="evidence">Evidence: persona/template feedback</span>
+                <h3>Make persona selection change the journey.</h3>
+                <p>If a user chooses support ops, product marketing, L&D, or customer success, show role-specific templates, community examples, next-best actions, and suggested workflows.</p>
+                <div class="rec-impact">Improves discovery of repeat use cases the user may not know they have.</div>
+              </article>
+            </div>
+        </section>
+
+        <section id="reduce-journeys">
+          <div class="section-head">
+            <h2>Journeys To Reduce Churn</h2>
+            <p class="section-intro">The recommendations become stronger when bundled into repeatable journeys instead of shipped as isolated fixes.</p>
+          </div>
+          <div class="workflow-strip">
+            <article class="workflow-mini">
+              <div class="num">1</div>
+              <h3>Smart Second Asset Journey</h3>
+              <p>After the first video/doc, Trupeer extracts persona, goals, URL, workflow context, brand preferences, and app context, then suggests the next asset or reusable skill.</p>
+              <b>Reduces churn by making the repeat cycle feel easier than the first cycle.</b>
+            </article>
+            <article class="workflow-mini">
+              <div class="num">2</div>
+              <h3>Existing Content Improvement Journey</h3>
+              <p>Dashboard nudges guide creators back to previous videos/docs with instant playback, direct doc access, list view, tags, and content-level search.</p>
+              <b>Reduces churn by making old content worth returning to.</b>
+            </article>
+            <article class="workflow-mini">
+              <div class="num">3</div>
+              <h3>Template And Skill Reuse Journey</h3>
+              <p>Creators save work by choosing themed templates or generated video skills that carry voice, avatar, music, brand kit, doc format, and publishing destination.</p>
+              <b>Reduces churn by turning repeated work into a reusable system.</b>
+            </article>
+            <article class="workflow-mini">
+              <div class="num">4</div>
+              <h3>Freshness And Drift Journey</h3>
+              <p>Trupeer monitors product URLs, screenshots, scripts, and workflows to flag stale videos/docs and suggest updates when the product changes.</p>
+              <b>Reduces churn by creating a renewal reason after the first content library is complete.</b>
+            </article>
+            <article class="workflow-mini">
+              <div class="num">5</div>
+              <h3>Support Discovery Journey</h3>
+              <p>Support teams search across videos, docs, transcripts, tags, and KB articles, then get suggested clips/guides for customer issues or FAQs.</p>
+              <b>Reduces churn by making Trupeer useful during support work, not only during content creation.</b>
+            </article>
+            <article class="workflow-mini">
+              <div class="num">6</div>
+              <h3>Publish Into Workflow Journey</h3>
+              <p>Creators move output directly into Drive, OneDrive, Notion, Confluence, Google Docs, help centers, or multiple internal/external knowledge bases.</p>
+              <b>Reduces churn by embedding Trupeer outputs where teams already work.</b>
+            </article>
+          </div>
+        </section>
+
+        <section id="stickiness">
+          <div class="section-head">
+            <h2>Stickiness</h2>
+            <p class="section-intro">The new feature recommendation: make Trupeer remember how a team creates, then make reuse easier every time.</p>
+          </div>
+          <div class="stickiness-feature">
+            <div class="card-kicker">New Feature Recommendation</div>
+            <h3>Trupeer Memory + Freshness Engine.</h3>
+            <p>A reusable knowledge layer that learns persona, brand preferences, product context, workflow categories, templates, video skills, document styles, publishing destinations, and product-change signals from prior assets. Every new recording/doc starts from memory, and every old asset can be monitored for freshness.</p>
+          </div>
+          <div class="stickiness-visual">
+            <div class="loop">
+              <div class="loop-line l1"></div>
+              <div class="loop-line l2"></div>
+              <div class="loop-line l3"></div>
+              <div class="loop-line l4"></div>
+              <div class="loop-node n1">Recurring Need</div>
+              <div class="loop-node n2">Repeated Value</div>
+              <div class="loop-node n3">Workflow Habit</div>
+              <div class="loop-node n4">Accumulated Assets</div>
+              <div class="loop-center">Stickiness reduces future churn risk</div>
+            </div>
+            <article class="stick-card">
+              <h3>Definition for Trupeer</h3>
+              <p>Trupeer becomes sticky when it becomes the operating layer for procedural knowledge: the place where teams create, publish, search, update, reuse, localize, and measure product/process knowledge.</p>
+              <ul class="check-list">
+                <li>Multiple teams create and maintain assets.</li>
+                <li>Assets are embedded in support, onboarding, sales, training, and KB workflows.</li>
+                <li>Users return to update and reuse content, not only create once.</li>
+                <li>Viewers regularly consume Trupeer content.</li>
+                <li>Buyers can see adoption, usage, and ROI.</li>
+                <li>The library accumulates templates, history, translations, analytics, and search behavior.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="sources">
+          <div class="section-head">
+            <h2>Sources</h2>
+            <p class="section-intro">Public Trupeer positioning plus comparable workflows from adjacent products.</p>
+          </div>
+          <div class="sources">
+            <a href="https://www.trupeer.ai/">Trupeer Homepage</a>
+            <a href="https://trupeer.ai/documentation">Trupeer Documentation Page</a>
+            <a href="https://trupeer.ai/pricing">Trupeer Pricing</a>
+            <a href="https://docs.trupeer.ai/">Trupeer Docs</a>
+            <a href="https://scribe.com/lp/screenshots">Scribe Workflow</a>
+            <a href="https://help.tango.ai/en/articles/7966907-how-do-i-use-tango-for-documentation">Tango Docs Workflow</a>
+            <a href="https://www.tango.ai/product/create">Tango Product</a>
+            <a href="https://help.guidde.com/en/articles/11045453-the-screen-recorder">Guidde Recorder</a>
+            <a href="https://www.loom.com/use-case/support">Loom Support</a>
+            <a href="https://www.maxio.com/saaspedia/logo-churn">Maxio Churn Definition</a>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const navLinks = Array.from(document.querySelectorAll('.nav a'));
+    const sections = navLinks
+      .map((link) => document.querySelector(link.getAttribute('href')))
+      .filter(Boolean);
+
+    const updateActiveNav = () => {
+      let current = sections[0];
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= 110) current = section;
+      }
+      navLinks.forEach((link) => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${current.id}`);
+      });
+    };
+
+    document.addEventListener('scroll', updateActiveNav, { passive: true });
+    updateActiveNav();
+
+    const segmentCards = Array.from(document.querySelectorAll('.segment-card'));
+    segmentCards.forEach((card) => {
+      card.addEventListener('click', () => {
+        const selected = card.classList.contains('selected');
+        segmentCards.forEach((item) => item.classList.remove('selected'));
+        if (!selected) card.classList.add('selected');
+      });
+    });
+
+  </script>
+</body>
+</html>
