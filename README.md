@@ -58,4 +58,3 @@ http://localhost:8123/index.html
 This is a static site and can be deployed on Vercel, Netlify, GitHub Pages, or any static hosting provider. No build step is required.
 
 For Vercel, import the GitHub repository and use the default static deployment settings.
-
