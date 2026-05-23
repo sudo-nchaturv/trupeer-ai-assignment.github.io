@@ -139,36 +139,33 @@ The recommendations become stronger when bundled into repeatable journeys instea
 | Support Discovery Journey | Support teams search across videos, docs, transcripts, tags, and KB articles, then get suggested clips/guides for customer issues or FAQs | Makes Trupeer useful during support work, not only during content creation |
 | Publish Into Workflow Journey | Creators move output directly into Drive, OneDrive, Notion, Confluence, Google Docs, help centers, or multiple internal/external knowledge bases | Embeds Trupeer outputs where teams already work |
 
-## 8. Stickiness In General
+## 8. Stickiness
 
 Stickiness is the degree to which users keep returning to a product because it has become useful, habitual, embedded, and costly to replace.
 
-Retention asks: are users staying?
+For Trupeer, stickiness means moving from an AI content generator to a recurring knowledge operating system.
 
-Stickiness asks: why do users keep coming back?
+### Stickiness Challenges
 
-Stickiness eventually prevents churn because it raises perceived value, reduces perceived effort, creates accumulated value, and embeds the product into recurring workflows.
+| Challenge | Why It Matters |
+|---|---|
+| Episodic creation | Users may create the few demos, SOPs, or support videos they need and then feel done until a launch, product change, or renewal cycle |
+| Content saturation | Small teams reach saturation quickly; larger teams reach it later. Either way, "we already made the library" becomes a churn risk |
+| Value leaves the product | If videos are downloaded, embedded, or shared elsewhere, Trupeer risks becoming a production tool instead of a daily workflow surface |
+| Discovery decays at scale | As libraries grow, users need tags, transcript search, filters, freshness, and support retrieval. Otherwise old content becomes hard to reuse |
+| POC user is not the real user | The evaluator may test Trupeer once, but stickiness depends on whether creators, support teams, and knowledge owners adopt repeat workflows |
+| Preferences are not compounding | If persona, brand, voice, templates, and workflow choices do not improve the next session, every creation feels like starting over |
 
-## 9. Stickiness For Trupeer AI
+### Top Stickiness Features
 
-For Trupeer, stickiness means:
-
-Trupeer becomes the operating layer for procedural knowledge: the place where teams create, publish, search, update, reuse, localize, and measure product/process knowledge.
-
-New feature recommendation:
-
-Trupeer Memory + Freshness Engine.
-
-A reusable knowledge layer that learns persona, brand preferences, product context, workflow categories, templates, video skills, document styles, publishing destinations, and product-change signals from prior assets. Every new recording/doc starts from memory, and every old asset can be monitored for freshness.
-
-Indicators of Trupeer stickiness:
-
-- Multiple teams create assets, not just one individual.
-- Assets are embedded in customer support, onboarding, sales, internal training, or knowledge base workflows.
-- Users return to update and reuse content, not only create once.
-- Viewers consume Trupeer content regularly.
-- Buyers can see usage, adoption, and ROI.
-- The knowledge library accumulates templates, history, analytics, translations, and search behavior.
+| Feature | Solves | Why It Improves Stickiness |
+|---|---|---|
+| Trupeer Memory | Preferences are not compounding | Learns persona, brand preferences, product context, workflow categories, templates, video skills, document styles, and publishing destinations |
+| Freshness And Product Drift Engine | Content saturation | Tracks URLs, screenshots, UI labels, scripts, and workflow steps to flag stale videos/docs when the product changes |
+| Support Discovery Copilot | Discovery decay at scale | Searches across videos, docs, transcripts, tags, and KB articles, then suggests relevant clips/guides for tickets, customer queries, or help-center searches |
+| Workflow Publishing Hub | Value leaves the product | Publishes and syncs assets to Drive, OneDrive, Notion, Confluence, Google Docs, help centers, internal KBs, and external KBs |
+| Creator Return Hub | Episodic creation | Surfaces next-best actions: update stale content, create the next template-based asset, publish pending content, or improve existing videos/docs |
+| Team Knowledge Ops Dashboard | POC user is not the real user | Shows content owners, freshness status, team adoption, views, searches, support usage, and renewal-level ROI |
 
 ## Sources Used
 
